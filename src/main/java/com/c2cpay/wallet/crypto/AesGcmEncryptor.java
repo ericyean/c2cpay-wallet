@@ -15,7 +15,8 @@ import java.util.Arrays;
 import java.util.Base64;
 
 /**
- * AES-256-GCM for custodial private-key storage. One wallet leak does not cascade.
+ * AES-256-GCM 加解密组件。
+ * <p>用于托管场景下子地址私钥的加密存储；单钱包泄露不会雪崩到其他钱包。</p>
  */
 @Component
 public class AesGcmEncryptor {
@@ -29,15 +30,29 @@ public class AesGcmEncryptor {
     private final SecureRandom secureRandom = new SecureRandom();
     private SecretKey secretKey;
 
+    /**
+     * 注入钱包配置（读取 enc-secret）。
+     *
+     * @param properties 钱包配置
+     */
     public AesGcmEncryptor(WalletProperties properties) {
         this.properties = properties;
     }
 
+    /**
+     * 容器启动后根据配置派生 AES 密钥。
+     */
     @PostConstruct
     void init() {
         this.secretKey = deriveKey(properties.getEncSecret());
     }
 
+    /**
+     * 将口令经 SHA-256 派生为 32 字节 AES 密钥。
+     *
+     * @param password 配置中的密钥材料
+     * @return AES SecretKey
+     */
     private static SecretKey deriveKey(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -48,6 +63,13 @@ public class AesGcmEncryptor {
         }
     }
 
+    /**
+     * 加密明文。
+     * <p>输出为 Base64({@code IV || ciphertext||tag})，IV 长度 12 字节。</p>
+     *
+     * @param plaintext 明文（如私钥 hex）
+     * @return Base64 密文
+     */
     public String encrypt(String plaintext) {
         try {
             byte[] iv = new byte[GCM_IV_LENGTH];
@@ -66,6 +88,12 @@ public class AesGcmEncryptor {
         }
     }
 
+    /**
+     * 解密密文。
+     *
+     * @param cipherText {@link #encrypt(String)} 产出的 Base64 串
+     * @return 明文
+     */
     public String decrypt(String cipherText) {
         try {
             byte[] combined = Base64.getDecoder().decode(cipherText);

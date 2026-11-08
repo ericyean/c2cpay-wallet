@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
+/** CreateCollectionRequest 类 */
 @Schema(description = "创建归集任务请求")
 public record CreateCollectionRequest(
         @Schema(description = "代收地址表主键 ID", requiredMode = Schema.RequiredMode.REQUIRED)

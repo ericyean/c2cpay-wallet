@@ -37,15 +37,18 @@ public class BitcoinCoinEntry implements CoinEntry {
 
     private final KeyResolver keyResolver;
 
+    /** 构造 BitcoinCoinEntry */
     public BitcoinCoinEntry(KeyResolver keyResolver) {
         this.keyResolver = keyResolver;
     }
 
+    /** coin type */
     @Override
     public CoinType coinType() {
         return CoinType.BITCOIN;
     }
 
+    /** 校验地址 */
     @Override
     public boolean validateAddress(String address) {
         try {
@@ -56,12 +59,14 @@ public class BitcoinCoinEntry implements CoinEntry {
         }
     }
 
+    /** 派生地址 */
     @Override
     public String deriveAddress(PublicKey publicKey) {
         ECKey key = ECKey.fromPublicOnly(publicKey.compressed().getBytes());
         return key.toAddress(ScriptType.P2WPKH, NETWORK).toString();
     }
 
+    /** 按币种签名交易 */
     @Override
     public SignResponse sign(SignRequest request) {
         PrivateKey privateKey = keyResolver.resolve(coinType(), request);
@@ -104,6 +109,7 @@ public class BitcoinCoinEntry implements CoinEntry {
         preimage.put(hashSequence);
         preimage.put(prevTxId);
         preimage.putInt(utxo.vout());
+      /** 写入var int */
         writeVarInt(preimage, scriptCode.length);
         preimage.put(scriptCode);
         preimage.putLong(utxo.amountSatoshi());
@@ -127,35 +133,45 @@ public class BitcoinCoinEntry implements CoinEntry {
         return SignResponse.of(coinType().getId(), Hex.encode(withWitness), txId);
     }
 
+    /** tx out */
     private record TxOut(long value, byte[] script) {
     }
 
+    /** 编码含见证交易 */
     private static byte[] encodeWithWitness(byte[] prevTxId, int vout, List<TxOut> outs, byte[] witSig, byte[] pub) {
         ByteBuffer buf = ByteBuffer.allocate(512);
         buf.order(ByteOrder.LITTLE_ENDIAN);
         buf.putInt(2);
         buf.put((byte) 0x00);
         buf.put((byte) 0x01);
+      /** 写入var int */
         writeVarInt(buf, 1);
         buf.put(prevTxId);
         buf.putInt(vout);
+      /** 写入var int */
         writeVarInt(buf, 0);
         buf.putInt(0xffffffff);
         buf.put(encodeOutputs(outs));
+      /** 写入var int */
         writeVarInt(buf, 2);
+      /** 写入见证压栈数据 */
         writePush(buf, witSig);
+      /** 写入见证压栈数据 */
         writePush(buf, pub);
         buf.putInt(0);
         return trim(buf);
     }
 
+    /** 编码无见证交易 */
     private static byte[] encodeNoWitness(byte[] prevTxId, int vout, List<TxOut> outs) {
         ByteBuffer buf = ByteBuffer.allocate(512);
         buf.order(ByteOrder.LITTLE_ENDIAN);
         buf.putInt(2);
+      /** 写入var int */
         writeVarInt(buf, 1);
         buf.put(prevTxId);
         buf.putInt(vout);
+      /** 写入var int */
         writeVarInt(buf, 0);
         buf.putInt(0xffffffff);
         buf.put(encodeOutputs(outs));
@@ -163,11 +179,13 @@ public class BitcoinCoinEntry implements CoinEntry {
         return trim(buf);
     }
 
+    /** 地址对应锁定脚本 */
     private static byte[] scriptForAddress(String address) {
         Address addr = Address.fromString(PARAMS, address);
         return ScriptBuilder.createOutputScript(addr).program();
     }
 
+    /** script code p 2 pkh */
     private static byte[] scriptCodeP2PKH(byte[] pubKeyHash) {
         ByteBuffer buf = ByteBuffer.allocate(25);
         buf.put((byte) 0x76);
@@ -179,23 +197,29 @@ public class BitcoinCoinEntry implements CoinEntry {
         return buf.array();
     }
 
+    /** 编码交易输出 */
     private static byte[] encodeOutputs(List<TxOut> outs) {
         ByteBuffer buf = ByteBuffer.allocate(256);
         buf.order(ByteOrder.LITTLE_ENDIAN);
+      /** 写入var int */
         writeVarInt(buf, outs.size());
         for (TxOut out : outs) {
             buf.putLong(out.value);
+          /** 写入var int */
             writeVarInt(buf, out.script.length);
             buf.put(out.script);
         }
         return trim(buf);
     }
 
+    /** 写入见证压栈数据 */
     private static void writePush(ByteBuffer buf, byte[] data) {
+      /** 写入var int */
         writeVarInt(buf, data.length);
         buf.put(data);
     }
 
+    /** 写入var int */
     private static void writeVarInt(ByteBuffer buf, long value) {
         if (value < 0xfd) {
             buf.put((byte) value);
@@ -208,10 +232,12 @@ public class BitcoinCoinEntry implements CoinEntry {
         }
     }
 
+    /** 是否存在h 256 */
     private static byte[] hash256(byte[] data) {
         return Sha256Hash.hashTwice(data);
     }
 
+    /** 反转 */
     private static byte[] reverse(byte[] in) {
         byte[] out = new byte[in.length];
         for (int i = 0; i < in.length; i++) {
@@ -220,6 +246,7 @@ public class BitcoinCoinEntry implements CoinEntry {
         return out;
     }
 
+    /** 拼接 */
     private static byte[] concat(byte[] a, byte[] b) {
         byte[] out = new byte[a.length + b.length];
         System.arraycopy(a, 0, out, 0, a.length);
@@ -227,10 +254,12 @@ public class BitcoinCoinEntry implements CoinEntry {
         return out;
     }
 
+    /** int 32 le */
     private static byte[] int32LE(long v) {
         return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt((int) v).array();
     }
 
+    /** 裁剪 */
     private static byte[] trim(ByteBuffer buf) {
         byte[] out = new byte[buf.position()];
         System.arraycopy(buf.array(), 0, out, 0, out.length);

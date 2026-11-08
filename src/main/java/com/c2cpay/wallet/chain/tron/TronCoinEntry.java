@@ -28,25 +28,30 @@ public class TronCoinEntry implements CoinEntry {
     private final KeyResolver keyResolver;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /** 构造 TronCoinEntry */
     public TronCoinEntry(KeyResolver keyResolver) {
         this.keyResolver = keyResolver;
     }
 
+    /** coin type */
     @Override
     public CoinType coinType() {
         return CoinType.TRON;
     }
 
+    /** 校验地址 */
     @Override
     public boolean validateAddress(String address) {
         return TronAddress.isValid(address);
     }
 
+    /** 派生地址 */
     @Override
     public String deriveAddress(PublicKey publicKey) {
         return TronAddress.fromPublicKey(publicKey);
     }
 
+    /** 按币种签名交易 */
     @Override
     public SignResponse sign(SignRequest request) {
         PrivateKey privateKey = keyResolver.resolve(coinType(), request);
@@ -100,14 +105,20 @@ public class TronCoinEntry implements CoinEntry {
         }
     }
 
+    /** 编码 TRON TransferContract */
     private static byte[] encodeTransferContract(byte[] owner, byte[] to, long amount) {
         ByteArrayOutputStream value = new ByteArrayOutputStream();
+      /** 写入 protobuf bytes 字段 */
         writeBytes(value, 1, owner);
+      /** 写入 protobuf bytes 字段 */
         writeBytes(value, 2, to);
+      /** 写入 protobuf varint 字段 */
         writeVarintField(value, 3, amount);
 
         ByteArrayOutputStream any = new ByteArrayOutputStream();
+      /** 写入 protobuf 字符串字段 */
         writeString(any, 1, "type.googleapis.com/protocol.TransferContract");
+      /** 写入 protobuf bytes 字段 */
         writeBytes(any, 2, value.toByteArray());
         return any.toByteArray();
     }
@@ -120,22 +131,31 @@ public class TronCoinEntry implements CoinEntry {
             byte[] refBlockHash
     ) {
         ByteArrayOutputStream contract = new ByteArrayOutputStream();
+      /** 写入 protobuf varint 字段 */
         writeVarintField(contract, 1, 1);
+      /** 写入 protobuf bytes 字段 */
         writeBytes(contract, 2, anyParameter);
 
         ByteArrayOutputStream raw = new ByteArrayOutputStream();
+      /** 写入 protobuf bytes 字段 */
         writeBytes(raw, 1, copy(refBlockBytes, 2));
+      /** 写入 protobuf bytes 字段 */
         writeBytes(raw, 4, copy(refBlockHash, 8));
+      /** 写入 protobuf varint 字段 */
         writeVarintField(raw, 8, expiration);
+      /** 写入 protobuf bytes 字段 */
         writeBytes(raw, 11, contract.toByteArray());
+      /** 写入 protobuf varint 字段 */
         writeVarintField(raw, 14, timestamp);
         return raw.toByteArray();
     }
 
+    /** 拷贝 */
     private static byte[] copy(byte[] src, int len) {
         return Arrays.copyOf(src, len);
     }
 
+    /** 生成可恢复签名 */
     private static byte[] signRecoverable(PrivateKey key, byte[] hash) {
         ECKeyPair pair = ECKeyPair.create(key.getBytes());
         Sign.SignatureData data = Sign.signMessage(hash, pair, false);
@@ -146,21 +166,30 @@ public class TronCoinEntry implements CoinEntry {
         return out;
     }
 
+    /** 写入 protobuf 字符串字段 */
     private static void writeString(ByteArrayOutputStream out, int fieldNumber, String value) {
+      /** 写入 protobuf bytes 字段 */
         writeBytes(out, fieldNumber, value.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
+    /** 写入 protobuf bytes 字段 */
     private static void writeBytes(ByteArrayOutputStream out, int fieldNumber, byte[] value) {
+      /** 写入 varint */
         writeVarint(out, (fieldNumber << 3) | 2);
+      /** 写入 varint */
         writeVarint(out, value.length);
         out.writeBytes(value);
     }
 
+    /** 写入 protobuf varint 字段 */
     private static void writeVarintField(ByteArrayOutputStream out, int fieldNumber, long value) {
+      /** 写入 varint */
         writeVarint(out, (long) fieldNumber << 3);
+      /** 写入 varint */
         writeVarint(out, value);
     }
 
+    /** 写入 varint */
     private static void writeVarint(ByteArrayOutputStream out, long value) {
         long v = value;
         while ((v & ~0x7FL) != 0) {

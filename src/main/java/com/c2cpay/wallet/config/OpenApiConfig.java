@@ -6,9 +6,11 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/** OpenApiConfig 类 */
 @Configuration
 public class OpenApiConfig {
 
+    /** c 2 c pay wallet open api */
     @Bean
     public OpenAPI c2cPayWalletOpenApi() {
         return new OpenAPI()

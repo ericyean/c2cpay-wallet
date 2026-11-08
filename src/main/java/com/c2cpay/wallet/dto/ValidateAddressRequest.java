@@ -3,6 +3,7 @@ package com.c2cpay.wallet.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+/** ValidateAddressRequest 类 */
 @Schema(description = "地址校验请求")
 public record ValidateAddressRequest(
         @Schema(description = "币种：bitcoin / ethereum / smartchain / tron", example = "tron", requiredMode = Schema.RequiredMode.REQUIRED)

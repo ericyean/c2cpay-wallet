@@ -5,7 +5,9 @@ package com.c2cpay.wallet.risk;
  */
 public interface RiskProvider {
 
+    /** 返回风控服务商名称 */
     String name();
 
+    /** 检查地址/交易风险 */
     RiskCheckResult checkAddress(String chain, String address, String txId);
 }

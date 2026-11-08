@@ -3,6 +3,7 @@ package com.c2cpay.wallet.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+/** DeriveAddressRequest 类 */
 @Schema(description = "地址派生请求（助记词与私钥二选一）")
 public record DeriveAddressRequest(
         @Schema(description = "币种：bitcoin / ethereum / smartchain / tron", example = "tron", requiredMode = Schema.RequiredMode.REQUIRED)

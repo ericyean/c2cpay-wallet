@@ -10,6 +10,10 @@ import org.bouncycastle.math.ec.ECPoint;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+/**
+ * secp256k1 私钥封装。
+ * <p>提供公钥推导与 ECDSA 签名（low-S 规范化）。</p>
+ */
 public final class PrivateKey {
 
     private static final X9ECParameters CURVE_PARAMS = SECNamedCurves.getByName("secp256k1");
@@ -21,6 +25,12 @@ public final class PrivateKey {
 
     private final byte[] key;
 
+    /**
+     * 使用 32 字节私钥材料构造。
+     *
+     * @param key 私钥字节，必须在 secp256k1 合法范围内
+     * @throws IllegalArgumentException 长度非法或数值越界时
+     */
     public PrivateKey(byte[] key) {
         if (key == null || key.length != 32) {
             throw new IllegalArgumentException("Private key must be 32 bytes");
@@ -32,14 +42,31 @@ public final class PrivateKey {
         this.key = Arrays.copyOf(key, key.length);
     }
 
+    /**
+     * 从十六进制字符串构造私钥。
+     *
+     * @param hex 私钥十六进制（可带 0x）
+     * @return 私钥实例
+     */
     public static PrivateKey fromHex(String hex) {
         return new PrivateKey(Hex.decode(hex));
     }
 
+    /**
+     * 返回私钥字节副本。
+     *
+     * @return 32 字节私钥
+     */
     public byte[] getBytes() {
         return Arrays.copyOf(key, key.length);
     }
 
+    /**
+     * 由私钥推导公钥。
+     *
+     * @param compressed true 返回压缩公钥，false 返回未压缩公钥
+     * @return 公钥
+     */
     public PublicKey getPublicKey(boolean compressed) {
         BigInteger d = new BigInteger(1, key);
         ECPoint q = CURVE.getG().multiply(d).normalize();
@@ -47,7 +74,12 @@ public final class PrivateKey {
     }
 
     /**
-     * Sign a 32-byte hash; returns (r||s) 64 bytes, low-S normalized.
+     * 对 32 字节消息哈希做 ECDSA 签名。
+     * <p>返回 {@code r||s} 共 64 字节，并对 s 做 low-S 规范化。</p>
+     *
+     * @param hash32 待签哈希，必须为 32 字节
+     * @return 64 字节签名（r||s）
+     * @throws IllegalArgumentException 哈希长度不是 32 时
      */
     public byte[] sign(byte[] hash32) {
         if (hash32.length != 32) {
@@ -66,6 +98,13 @@ public final class PrivateKey {
         return concat32(r, s);
     }
 
+    /**
+     * 将 r、s 拼为固定 64 字节大端数组。
+     *
+     * @param r 签名 r
+     * @param s 签名 s
+     * @return r||s
+     */
     private static byte[] concat32(BigInteger r, BigInteger s) {
         byte[] out = new byte[64];
         System.arraycopy(toFixed32(r), 0, out, 0, 32);
@@ -73,6 +112,12 @@ public final class PrivateKey {
         return out;
     }
 
+    /**
+     * 将 BigInteger 编码为固定 32 字节大端表示。
+     *
+     * @param value 整数值
+     * @return 32 字节数组
+     */
     private static byte[] toFixed32(BigInteger value) {
         byte[] raw = value.toByteArray();
         byte[] out = new byte[32];

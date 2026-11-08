@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/** PayoutOrderResponse 类 */
 @Schema(description = "代付订单信息")
 public record PayoutOrderResponse(
         @Schema(description = "订单 ID")
@@ -34,10 +35,12 @@ public record PayoutOrderResponse(
         @Schema(description = "风控检测结果（创建时返回）")
         RiskCheckResult risk
 ) {
+    /** 从参数构造 */
     public static PayoutOrderResponse from(PayoutOrderEntity e) {
         return from(e, null);
     }
 
+    /** 从参数构造 */
     public static PayoutOrderResponse from(PayoutOrderEntity e, RiskCheckResult risk) {
         return new PayoutOrderResponse(
                 e.getId(),

@@ -2,6 +2,7 @@ package com.c2cpay.wallet.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/** MnemonicResponse 类 */
 @Schema(description = "助记词响应")
 public record MnemonicResponse(
         @Schema(description = "BIP39 助记词")

@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/** AppConfig 类 */
 @Configuration
 @EnableScheduling
 @EnableConfigurationProperties(WalletProperties.class)
@@ -16,6 +17,7 @@ public class AppConfig {
 
     private final WalletProperties properties;
 
+    /** 构造 AppConfig */
     public AppConfig(WalletProperties properties) {
         this.properties = properties;
     }

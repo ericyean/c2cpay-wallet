@@ -2,6 +2,7 @@ package com.c2cpay.wallet.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/** CoinInfoResponse 类 */
 @Schema(description = "币种信息")
 public record CoinInfoResponse(
         @Schema(description = "SLIP44 / 内部 coinId")

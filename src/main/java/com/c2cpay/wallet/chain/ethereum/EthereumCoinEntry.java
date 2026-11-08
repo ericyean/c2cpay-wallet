@@ -17,30 +17,36 @@ import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
 
+/** EthereumCoinEntry 类 */
 @Component
 public class EthereumCoinEntry implements CoinEntry {
 
     private final KeyResolver keyResolver;
 
+    /** 构造 EthereumCoinEntry */
     public EthereumCoinEntry(KeyResolver keyResolver) {
         this.keyResolver = keyResolver;
     }
 
+    /** coin type */
     @Override
     public CoinType coinType() {
         return CoinType.ETHEREUM;
     }
 
+    /** 校验地址 */
     @Override
     public boolean validateAddress(String address) {
         return EthereumAddress.isValid(address);
     }
 
+    /** 派生地址 */
     @Override
     public String deriveAddress(PublicKey publicKey) {
         return EthereumAddress.fromPublicKey(publicKey);
     }
 
+    /** 按币种签名交易 */
     @Override
     public SignResponse sign(SignRequest request) {
         PrivateKey privateKey = keyResolver.resolve(coinType(), request);

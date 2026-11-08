@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
 
+/** DepositAddressResponse 类 */
 @Schema(description = "代收地址信息")
 public record DepositAddressResponse(
         @Schema(description = "主键 ID")
@@ -31,10 +32,12 @@ public record DepositAddressResponse(
         @Schema(description = "风控检测结果（确认入账时返回）")
         RiskCheckResult risk
 ) {
+    /** 从参数构造 */
     public static DepositAddressResponse from(DepositAddressEntity e) {
         return from(e, null);
     }
 
+    /** 从参数构造 */
     public static DepositAddressResponse from(DepositAddressEntity e, RiskCheckResult risk) {
         return new DepositAddressResponse(
                 e.getId(),

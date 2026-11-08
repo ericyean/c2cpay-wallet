@@ -40,7 +40,14 @@ c2cpay:
       address: ${WALLET_ISOLATION_ADDRESS:}
     tron:
       api-base-url: ${TRON_API_BASE:https://api.trongrid.io}
+      api-key: ${TRON_API_KEY:}
       usdt-contract: ${TRON_USDT_CONTRACT:TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t}
+    ethereum:
+      rpc-url: ${ETH_RPC_URL:}
+    smartchain:
+      rpc-url: ${BSC_RPC_URL:https://bsc-dataseed.binance.org}
+    bitcoin:
+      api-base-url: ${BTC_API_BASE:https://blockstream.info/api}
     risk:
       enabled: true
       # fail-open | fail-closed — query failure behaviour

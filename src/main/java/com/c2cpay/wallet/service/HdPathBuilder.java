@@ -13,10 +13,12 @@ public class HdPathBuilder {
 
     private final WalletProperties properties;
 
+    /** 构造 HdPathBuilder */
     public HdPathBuilder(WalletProperties properties) {
         this.properties = properties;
     }
 
+    /** 构建 BIP44 派生路径 */
     public String build(CoinType coin, int index) {
         int coinType = switch (coin) {
             case BITCOIN -> 0;

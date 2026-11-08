@@ -3,6 +3,7 @@ package com.c2cpay.wallet.dto.business;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+/** MarkDepositRequest 类 */
 @Schema(description = "确认入账请求")
 public record MarkDepositRequest(
         @Schema(description = "业务单号", requiredMode = Schema.RequiredMode.REQUIRED)

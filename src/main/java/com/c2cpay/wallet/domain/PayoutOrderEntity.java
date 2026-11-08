@@ -20,6 +20,7 @@ import java.time.Instant;
         uniqueConstraints = @UniqueConstraint(name = "uk_payout_biz", columnNames = "biz_order_id"),
         indexes = @Index(name = "idx_payout_status", columnList = "status")
 )
+/** PayoutOrderEntity 类 */
 public class PayoutOrderEntity {
 
     @Id
@@ -62,88 +63,109 @@ public class PayoutOrderEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
+    /** 获取id */
     public Long getId() {
         return id;
     }
 
+    /** 获取biz order ID */
     public String getBizOrderId() {
         return bizOrderId;
     }
 
+    /** 设置biz order ID */
     public void setBizOrderId(String bizOrderId) {
         this.bizOrderId = bizOrderId;
     }
 
+    /** 获取asset */
     public AssetType getAsset() {
         return asset;
     }
 
+    /** 设置asset */
     public void setAsset(AssetType asset) {
         this.asset = asset;
     }
 
+    /** 获取转入地址 */
     public String getToAddress() {
         return toAddress;
     }
 
+    /** 设置转入地址 */
     public void setToAddress(String toAddress) {
         this.toAddress = toAddress;
     }
 
+    /** 获取amount */
     public BigDecimal getAmount() {
         return amount;
     }
 
+    /** 设置amount */
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
+    /** 获取status */
     public PayoutStatus getStatus() {
         return status;
     }
 
+    /** 设置status */
     public void setStatus(PayoutStatus status) {
         this.status = status;
         this.updatedAt = Instant.now();
     }
 
+    /** 获取风险等级 */
     public RiskLevel getRiskLevel() {
         return riskLevel;
     }
 
+    /** 设置风险等级 */
     public void setRiskLevel(RiskLevel riskLevel) {
         this.riskLevel = riskLevel;
         this.updatedAt = Instant.now();
     }
 
+    /** 获取tx ID */
     public String getTxId() {
         return txId;
     }
 
+    /** 设置tx ID */
     public void setTxId(String txId) {
         this.txId = txId;
     }
 
+    /** 获取已签名原始交易 */
     public String getRawTxHex() {
         return rawTxHex;
     }
 
+    /** 设置已签名原始交易 */
     public void setRawTxHex(String rawTxHex) {
         this.rawTxHex = rawTxHex;
     }
 
+    /** 获取失败原因 */
     public String getFailReason() {
         return failReason;
     }
 
+    /** 设置失败原因 */
     public void setFailReason(String failReason) {
         this.failReason = failReason;
     }
 
+    /** 获取创建时间 */
     public Instant getCreatedAt() {
         return createdAt;
     }
 
+    /** 获取更新时间 */
     public Instant getUpdatedAt() {
         return updatedAt;
     }

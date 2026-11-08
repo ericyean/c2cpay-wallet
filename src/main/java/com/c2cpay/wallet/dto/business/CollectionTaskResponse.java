@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/** CollectionTaskResponse 类 */
 @Schema(description = "归集任务信息")
 public record CollectionTaskResponse(
         @Schema(description = "任务 ID")
@@ -29,6 +30,7 @@ public record CollectionTaskResponse(
         @Schema(description = "创建时间")
         Instant createdAt
 ) {
+    /** 从参数构造 */
     public static CollectionTaskResponse from(CollectionTaskEntity e) {
         return new CollectionTaskResponse(
                 e.getId(),

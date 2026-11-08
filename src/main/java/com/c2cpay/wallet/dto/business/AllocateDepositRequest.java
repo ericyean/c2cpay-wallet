@@ -3,6 +3,7 @@ package com.c2cpay.wallet.dto.business;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+/** AllocateDepositRequest 类 */
 @Schema(description = "分配代收地址请求")
 public record AllocateDepositRequest(
         @Schema(description = "业务单号（幂等键）", example = "ORD-10001", requiredMode = Schema.RequiredMode.REQUIRED)

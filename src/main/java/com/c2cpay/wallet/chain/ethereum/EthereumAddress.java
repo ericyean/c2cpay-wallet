@@ -7,11 +7,14 @@ import com.c2cpay.wallet.crypto.PublicKey;
 import java.util.Arrays;
 import java.util.Locale;
 
+/** EthereumAddress 类 */
 public final class EthereumAddress {
 
+    /** 构造 EthereumAddress */
     private EthereumAddress() {
     }
 
+    /** 由公钥派生地址 */
     public static String fromPublicKey(PublicKey publicKey) {
         byte[] uncompressed = publicKey.uncompressed().getBytes();
         // drop 0x04 prefix
@@ -21,6 +24,7 @@ public final class EthereumAddress {
         return toChecksumAddress("0x" + Hex.encode(address));
     }
 
+    /** 是否valid */
     public static boolean isValid(String address) {
         if (address == null) {
             return false;
@@ -37,6 +41,7 @@ public final class EthereumAddress {
         return a.equals(toChecksumAddress(a));
     }
 
+    /** 转换为EIP-55 校验和地址 */
     public static String toChecksumAddress(String address) {
         String lower = address.substring(2).toLowerCase(Locale.ROOT);
         byte[] hash = Hashing.keccak256(lower.getBytes(java.nio.charset.StandardCharsets.US_ASCII));

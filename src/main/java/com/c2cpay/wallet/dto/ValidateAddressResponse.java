@@ -2,6 +2,7 @@ package com.c2cpay.wallet.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/** ValidateAddressResponse 类 */
 @Schema(description = "地址校验响应")
 public record ValidateAddressResponse(
         @Schema(description = "币种 id")

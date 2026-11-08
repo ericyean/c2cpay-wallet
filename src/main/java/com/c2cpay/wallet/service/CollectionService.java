@@ -53,6 +53,7 @@ public class CollectionService {
         this.collectionTaskRepository = collectionTaskRepository;
     }
 
+    /** 查询待归集任务列表 */
     @Transactional(readOnly = true)
     public List<CollectionTaskResponse> listPending() {
         return collectionTaskRepository.findByStatus(CollectionTaskEntity.Status.PENDING).stream()
@@ -60,6 +61,7 @@ public class CollectionService {
                 .toList();
     }
 
+    /** 创建归集任务并签名 */
     @Transactional
     public CollectionTaskResponse createAndSign(CreateCollectionRequest request) {
         DepositAddressEntity deposit = depositAddressRepository.findById(request.depositAddressId())
@@ -101,6 +103,7 @@ public class CollectionService {
         return CollectionTaskResponse.from(task);
     }
 
+    /** 构建归集任务实体 */
     private CollectionTaskEntity newTask(DepositAddressEntity deposit, BigDecimal amount, String to) {
         CollectionTaskEntity task = new CollectionTaskEntity();
         task.setDepositAddressId(deposit.getId());
@@ -111,6 +114,7 @@ public class CollectionService {
         return task;
     }
 
+    /** 是否olation or hot */
     private String isolationOrHot(boolean isolate) {
         if (isolate) {
             String isolation = properties.getIsolation().getAddress();
@@ -128,6 +132,7 @@ public class CollectionService {
         return dispatcher.deriveAddress(coin, pub);
     }
 
+    /** 签名native transfer */
     private SignResponse signNativeTransfer(DepositAddressEntity deposit, String to, BigDecimal amount) {
         CoinType coin = CoinType.fromId(deposit.getCoin())
                 .orElseThrow(() -> new IllegalArgumentException("Unsupported coin: " + deposit.getCoin()));

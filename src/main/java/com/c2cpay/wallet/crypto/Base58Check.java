@@ -3,7 +3,8 @@ package com.c2cpay.wallet.crypto;
 import java.util.Arrays;
 
 /**
- * Bitcoin-style Base58Check used by BTC / TRON addresses.
+ * Bitcoin 风格 Base58Check 编解码。
+ * <p>用于 BTC / TRON 等地址的 payload + 4 字节 checksum（双 SHA-256）编码。</p>
  */
 public final class Base58Check {
 
@@ -18,9 +19,16 @@ public final class Base58Check {
         }
     }
 
+    /** 工具类，禁止实例化。 */
     private Base58Check() {
     }
 
+    /**
+     * Base58Check 编码：对 payload 追加 4 字节 checksum 后再做 Base58。
+     *
+     * @param payload 原始载荷（如版本前缀 + 地址哈希）
+     * @return Base58Check 字符串
+     */
     public static String encode(byte[] payload) {
         byte[] checksum = Hashing.sha256d(payload);
         byte[] data = new byte[payload.length + 4];
@@ -29,6 +37,13 @@ public final class Base58Check {
         return encodeRaw(data);
     }
 
+    /**
+     * Base58Check 解码并校验 checksum。
+     *
+     * @param input Base58Check 字符串
+     * @return 去掉 checksum 后的 payload
+     * @throws IllegalArgumentException 字符非法或 checksum 不匹配时
+     */
     public static byte[] decode(String input) {
         byte[] decoded = decodeRaw(input);
         if (decoded.length < 4) {
@@ -43,6 +58,12 @@ public final class Base58Check {
         return payload;
     }
 
+    /**
+     * 纯 Base58 编码（不含 checksum 逻辑）。
+     *
+     * @param input 待编码字节
+     * @return Base58 字符串
+     */
     private static String encodeRaw(byte[] input) {
         int zeros = 0;
         while (zeros < input.length && input[zeros] == 0) {
@@ -66,6 +87,12 @@ public final class Base58Check {
         return new String(encoded, outputStart, encoded.length - outputStart);
     }
 
+    /**
+     * 纯 Base58 解码（不含 checksum 校验）。
+     *
+     * @param input Base58 字符串
+     * @return 解码字节
+     */
     private static byte[] decodeRaw(String input) {
         if (input.isEmpty()) {
             return new byte[0];
@@ -97,6 +124,15 @@ public final class Base58Check {
         return Arrays.copyOfRange(decoded, outputStart - zeros, decoded.length);
     }
 
+    /**
+     * 对大端数字数组做一次除法，返回余数，并原位写回商。
+     *
+     * @param number     数字数组（会被原地修改）
+     * @param firstDigit 有效最高位下标
+     * @param base       当前进制
+     * @param divisor    除数
+     * @return 余数
+     */
     private static byte divmod(byte[] number, int firstDigit, int base, int divisor) {
         int remainder = 0;
         for (int i = firstDigit; i < number.length; i++) {

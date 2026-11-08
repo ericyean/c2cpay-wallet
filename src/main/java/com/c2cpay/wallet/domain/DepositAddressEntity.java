@@ -25,6 +25,7 @@ import java.time.Instant;
                 @Index(name = "idx_deposit_status", columnList = "status")
         }
 )
+/** DepositAddressEntity 类 */
 public class DepositAddressEntity {
 
     @Id
@@ -68,88 +69,109 @@ public class DepositAddressEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
+    /** 获取id */
     public Long getId() {
         return id;
     }
 
+    /** 获取biz order ID */
     public String getBizOrderId() {
         return bizOrderId;
     }
 
+    /** 设置biz order ID */
     public void setBizOrderId(String bizOrderId) {
         this.bizOrderId = bizOrderId;
     }
 
+    /** 获取asset */
     public AssetType getAsset() {
         return asset;
     }
 
+    /** 设置asset */
     public void setAsset(AssetType asset) {
         this.asset = asset;
     }
 
+    /** 获取coin */
     public String getCoin() {
         return coin;
     }
 
+    /** 设置coin */
     public void setCoin(String coin) {
         this.coin = coin;
     }
 
+    /** 获取address */
     public String getAddress() {
         return address;
     }
 
+    /** 设置address */
     public void setAddress(String address) {
         this.address = address;
     }
 
+    /** 获取派生路径 */
     public String getDerivationPath() {
         return derivationPath;
     }
 
+    /** 设置派生路径 */
     public void setDerivationPath(String derivationPath) {
         this.derivationPath = derivationPath;
     }
 
+    /** 获取HD 下标 */
     public int getHdIndex() {
         return hdIndex;
     }
 
+    /** 设置HD 下标 */
     public void setHdIndex(int hdIndex) {
         this.hdIndex = hdIndex;
     }
 
+    /** 获取加密私钥 */
     public String getEncryptedPrivateKey() {
         return encryptedPrivateKey;
     }
 
+    /** 设置加密私钥 */
     public void setEncryptedPrivateKey(String encryptedPrivateKey) {
         this.encryptedPrivateKey = encryptedPrivateKey;
     }
 
+    /** 获取status */
     public DepositAddressStatus getStatus() {
         return status;
     }
 
+    /** 设置status */
     public void setStatus(DepositAddressStatus status) {
         this.status = status;
         this.updatedAt = Instant.now();
     }
 
+    /** 获取风险等级 */
     public RiskLevel getRiskLevel() {
         return riskLevel;
     }
 
+    /** 设置风险等级 */
     public void setRiskLevel(RiskLevel riskLevel) {
         this.riskLevel = riskLevel;
         this.updatedAt = Instant.now();
     }
 
+    /** 获取创建时间 */
     public Instant getCreatedAt() {
         return createdAt;
     }
 
+    /** 获取更新时间 */
     public Instant getUpdatedAt() {
         return updatedAt;
     }

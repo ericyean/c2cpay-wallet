@@ -7,13 +7,16 @@ import com.c2cpay.wallet.crypto.PublicKey;
 
 import java.util.Arrays;
 
+/** TronAddress 类 */
 public final class TronAddress {
 
     public static final byte PREFIX = 0x41;
 
+    /** 构造 TronAddress */
     private TronAddress() {
     }
 
+    /** 由公钥派生地址 */
     public static String fromPublicKey(PublicKey publicKey) {
         byte[] uncompressed = publicKey.uncompressed().getBytes();
         byte[] pub = Arrays.copyOfRange(uncompressed, 1, uncompressed.length);
@@ -25,6 +28,7 @@ public final class TronAddress {
         return Base58Check.encode(payload);
     }
 
+    /** 是否valid */
     public static boolean isValid(String address) {
         try {
             byte[] payload = Base58Check.decode(address.trim());
@@ -34,6 +38,7 @@ public final class TronAddress {
         }
     }
 
+    /** 地址转字节 */
     public static byte[] toBytes(String address) {
         byte[] payload = Base58Check.decode(address.trim());
         if (payload.length != 21 || payload[0] != PREFIX) {
@@ -42,6 +47,7 @@ public final class TronAddress {
         return payload;
     }
 
+    /** 地址转十六进制 */
     public static String toHex(String address) {
         return Hex.encode(toBytes(address));
     }

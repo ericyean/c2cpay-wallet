@@ -23,6 +23,10 @@ import com.c2cpay.wallet.risk.RiskService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 代收地址服务。
+ * <p>负责 HD 一单一址分配、入账确认与黑 U 风控标记。</p>
+ */
 @Service
 public class DepositAddressService {
 
@@ -34,6 +38,7 @@ public class DepositAddressService {
     private final HdIndexCounterRepository hdIndexCounterRepository;
     private final RiskService riskService;
 
+    /** 注入配置、HD、加密与仓储依赖。 */
     public DepositAddressService(
             WalletProperties properties,
             HdPathBuilder pathBuilder,
@@ -52,6 +57,12 @@ public class DepositAddressService {
         this.riskService = riskService;
     }
 
+    /**
+     * 按业务单号分配 HD 代收地址（幂等）。
+     *
+     * @param request 业务单号 + 资产类型
+     * @return 代收地址信息
+     */
     @Transactional
     public DepositAddressResponse allocate(AllocateDepositRequest request) {
         AssetType asset = AssetType.fromCode(request.asset())
@@ -63,6 +74,14 @@ public class DepositAddressService {
                 .orElseGet(() -> createNew(request.bizOrderId(), asset, coin));
     }
 
+    /**
+     * 派生新地址并加密落库。
+     *
+     * @param bizOrderId 业务单号
+     * @param asset      资产
+     * @param coin       链
+     * @return 新建代收地址
+     */
     private DepositAddressResponse createNew(String bizOrderId, AssetType asset, CoinType coin) {
         if (!properties.getHd().isConfigured()) {
             throw new IllegalStateException("HD mnemonic not configured (c2cpay.wallet.hd.mnemonic)");
@@ -93,6 +112,12 @@ public class DepositAddressService {
         return DepositAddressResponse.from(entity);
     }
 
+    /**
+     * 按业务单号查询代收地址。
+     *
+     * @param bizOrderId 业务单号
+     * @return 代收地址信息
+     */
     @Transactional(readOnly = true)
     public DepositAddressResponse getByBizOrderId(String bizOrderId) {
         return depositAddressRepository.findByBizOrderId(bizOrderId)
@@ -101,8 +126,10 @@ public class DepositAddressService {
     }
 
     /**
-     * Called when chain scanner / biz layer confirms an inbound transfer.
-     * Runs black-U check before marking collectible / isolated.
+     * 确认入账并执行黑 U 风险检测，更新地址状态。
+     *
+     * @param request 业务单号 + 链上 txId
+     * @return 更新后的代收地址（含风控结果）
      */
     @Transactional
     public DepositAddressResponse markDeposited(MarkDepositRequest request) {

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
+/** CreatePayoutRequest 类 */
 @Schema(description = "创建代付单请求")
 public record CreatePayoutRequest(
         @Schema(description = "业务单号（幂等键）", example = "PAY-20001", requiredMode = Schema.RequiredMode.REQUIRED)

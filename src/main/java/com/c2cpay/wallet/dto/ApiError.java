@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
 
+/** ApiError 类 */
 @Schema(description = "统一错误响应")
 public record ApiError(
         @Schema(description = "时间")

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/** 归集 REST 接口：查询待归集任务、创建并签名归集交易。 */
 @RestController
 @RequestMapping("/api/v1/collection")
 @Tag(name = "归集", description = "将代收子地址余额归集到热钱包或风控隔离钱包")
@@ -21,16 +22,19 @@ public class CollectionController {
 
     private final CollectionService collectionService;
 
+    /** 注入归集服务。 */
     public CollectionController(CollectionService collectionService) {
         this.collectionService = collectionService;
     }
 
+    /** 查询待归集任务列表。 */
     @GetMapping("/pending")
     @Operation(summary = "待归集任务列表", description = "查询状态为 PENDING 的归集任务")
     public List<CollectionTaskResponse> pending() {
         return collectionService.listPending();
     }
 
+    /** 创建归集任务并对子地址转出交易签名。 */
     @PostMapping("/sign")
     @Operation(summary = "创建并签名归集交易", description = "从子地址签名转出到热钱包/隔离钱包；返回原始交易，由调用方负责广播")
     public CollectionTaskResponse sign(@Valid @RequestBody CreateCollectionRequest request) {

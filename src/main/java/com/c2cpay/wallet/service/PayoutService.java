@@ -44,6 +44,7 @@ public class PayoutService {
         this.riskService = riskService;
     }
 
+    /** 创建业务对象 */
     @Transactional
     public PayoutOrderResponse create(CreatePayoutRequest request) {
         AssetType asset = AssetType.fromCode(request.asset())
@@ -73,6 +74,7 @@ public class PayoutService {
                 });
     }
 
+    /** 审核通过并用热钱包签名 */
     @Transactional
     public PayoutOrderResponse approveAndSign(String bizOrderId) {
         PayoutOrderEntity order = payoutOrderRepository.findByBizOrderId(bizOrderId)
@@ -101,6 +103,7 @@ public class PayoutService {
         return PayoutOrderResponse.from(order);
     }
 
+    /** 按条件查询 */
     @Transactional(readOnly = true)
     public PayoutOrderResponse get(String bizOrderId) {
         return payoutOrderRepository.findByBizOrderId(bizOrderId)
@@ -108,6 +111,7 @@ public class PayoutService {
                 .orElseThrow(() -> new IllegalArgumentException("Payout not found: " + bizOrderId));
     }
 
+    /** 签名from hot */
     private SignResponse signFromHot(PayoutOrderEntity order) {
         CoinType coin = order.getAsset().getCoin();
         String privateKeyHex = Hex.normalize(properties.getHot().getPrivateKeyHex());

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.math.BigInteger;
 import java.util.List;
 
+/** SignRequest 类 */
 @Schema(description = "统一交易签名请求（按币种填写对应字段）")
 public record SignRequest(
         @Schema(description = "币种：bitcoin / ethereum / smartchain / tron", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -73,6 +74,7 @@ public record SignRequest(
     ) {
     }
 
+    /** 解析 valueWei，空则返回 0 */
     public BigInteger valueWeiOrZero() {
         return valueWei == null || valueWei.isBlank() ? BigInteger.ZERO : new BigInteger(valueWei);
     }

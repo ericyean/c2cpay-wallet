@@ -15,25 +15,30 @@ public class SmartChainCoinEntry implements CoinEntry {
 
     private final EthereumCoinEntry ethereum;
 
+    /** 构造 SmartChainCoinEntry */
     public SmartChainCoinEntry(EthereumCoinEntry ethereum) {
         this.ethereum = ethereum;
     }
 
+    /** coin type */
     @Override
     public CoinType coinType() {
         return CoinType.BINANCE_SMART_CHAIN;
     }
 
+    /** 校验地址 */
     @Override
     public boolean validateAddress(String address) {
         return ethereum.validateAddress(address);
     }
 
+    /** 派生地址 */
     @Override
     public String deriveAddress(PublicKey publicKey) {
         return ethereum.deriveAddress(publicKey);
     }
 
+    /** 按币种签名交易 */
     @Override
     public SignResponse sign(SignRequest request) {
         Long chainId = request.chainId() == null ? 56L : request.chainId();

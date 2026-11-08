@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/** CollectionTaskEntity 类 */
 @Entity
 @Table(name = "collection_task")
 public class CollectionTaskEntity {
@@ -59,79 +60,98 @@ public class CollectionTaskEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
+    /** 获取id */
     public Long getId() {
         return id;
     }
 
+    /** 获取deposit address ID */
     public Long getDepositAddressId() {
         return depositAddressId;
     }
 
+    /** 设置deposit address ID */
     public void setDepositAddressId(Long depositAddressId) {
         this.depositAddressId = depositAddressId;
     }
 
+    /** 获取asset */
     public AssetType getAsset() {
         return asset;
     }
 
+    /** 设置asset */
     public void setAsset(AssetType asset) {
         this.asset = asset;
     }
 
+    /** 获取转出地址 */
     public String getFromAddress() {
         return fromAddress;
     }
 
+    /** 设置转出地址 */
     public void setFromAddress(String fromAddress) {
         this.fromAddress = fromAddress;
     }
 
+    /** 获取转入地址 */
     public String getToAddress() {
         return toAddress;
     }
 
+    /** 设置转入地址 */
     public void setToAddress(String toAddress) {
         this.toAddress = toAddress;
     }
 
+    /** 获取amount */
     public BigDecimal getAmount() {
         return amount;
     }
 
+    /** 设置amount */
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
+    /** 获取status */
     public Status getStatus() {
         return status;
     }
 
+    /** 设置status */
     public void setStatus(Status status) {
         this.status = status;
         this.updatedAt = Instant.now();
     }
 
+    /** 获取tx ID */
     public String getTxId() {
         return txId;
     }
 
+    /** 设置tx ID */
     public void setTxId(String txId) {
         this.txId = txId;
     }
 
+    /** 获取失败原因 */
     public String getFailReason() {
         return failReason;
     }
 
+    /** 设置失败原因 */
     public void setFailReason(String failReason) {
         this.failReason = failReason;
     }
 
+    /** 获取创建时间 */
     public Instant getCreatedAt() {
         return createdAt;
     }
 
+    /** 获取更新时间 */
     public Instant getUpdatedAt() {
         return updatedAt;
     }
