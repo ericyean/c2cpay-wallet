@@ -1,0 +1,48 @@
+package com.c2cpay.wallet.chain.tron;
+
+import com.c2cpay.wallet.crypto.Base58Check;
+import com.c2cpay.wallet.crypto.Hashing;
+import com.c2cpay.wallet.crypto.Hex;
+import com.c2cpay.wallet.crypto.PublicKey;
+
+import java.util.Arrays;
+
+public final class TronAddress {
+
+    public static final byte PREFIX = 0x41;
+
+    private TronAddress() {
+    }
+
+    public static String fromPublicKey(PublicKey publicKey) {
+        byte[] uncompressed = publicKey.uncompressed().getBytes();
+        byte[] pub = Arrays.copyOfRange(uncompressed, 1, uncompressed.length);
+        byte[] hash = Hashing.keccak256(pub);
+        byte[] address20 = Arrays.copyOfRange(hash, 12, 32);
+        byte[] payload = new byte[21];
+        payload[0] = PREFIX;
+        System.arraycopy(address20, 0, payload, 1, 20);
+        return Base58Check.encode(payload);
+    }
+
+    public static boolean isValid(String address) {
+        try {
+            byte[] payload = Base58Check.decode(address.trim());
+            return payload.length == 21 && payload[0] == PREFIX;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static byte[] toBytes(String address) {
+        byte[] payload = Base58Check.decode(address.trim());
+        if (payload.length != 21 || payload[0] != PREFIX) {
+            throw new IllegalArgumentException("Invalid TRON address");
+        }
+        return payload;
+    }
+
+    public static String toHex(String address) {
+        return Hex.encode(toBytes(address));
+    }
+}

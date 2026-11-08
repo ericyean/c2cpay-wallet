@@ -1,0 +1,64 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: c2cpay-wallet
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/c2cpay_wallet?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: "12345678"
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+
+# Stateless crypto APIs (wallet-core style). Keys in request body must stay on trusted intranet.
+c2cpay:
+  wallet:
+    enc-secret: ${WALLET_ENC_SECRET:dev-only-change-me-32bytes-secret!!}
+    security:
+      allow-private-key-in-request: true
+      warn-on-startup: true
+    hd:
+      # Leave empty in prod — inject via env / secret manager.
+      mnemonic: ${WALLET_HD_MNEMONIC:}
+      passphrase: ${WALLET_HD_PASSPHRASE:}
+      account: 0
+      change: 0
+    hot:
+      # Hot wallet private key (hex) used for payout / collection destination signing.
+      private-key-hex: ${WALLET_HOT_PRIVATE_KEY:}
+    isolation:
+      # Black-U / high-risk funds go here (address only; do not mix with hot).
+      address: ${WALLET_ISOLATION_ADDRESS:}
+    tron:
+      api-base-url: ${TRON_API_BASE:https://api.trongrid.io}
+      usdt-contract: ${TRON_USDT_CONTRACT:TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t}
+    risk:
+      enabled: true
+      # fail-open | fail-closed — query failure behaviour
+      on-provider-error: fail-closed
+      provider: noop
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.c2cpay.wallet: INFO

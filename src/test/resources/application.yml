@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:c2cpay-wallet-test;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+c2cpay:
+  wallet:
+    enc-secret: test-secret-key-for-unit-tests-only
+    security:
+      allow-private-key-in-request: true
+      warn-on-startup: false
+    hd:
+      # BIP39 test vector mnemonic
+      mnemonic: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about
+      passphrase: ""
+      account: 0
+      change: 0
+    hot:
+      # Deterministic key from same mnemonic m/44'/195'/0'/0/0 — filled in tests when needed
+      private-key-hex: ""
+    isolation:
+      address: ""
+    risk:
+      enabled: true
+      provider: noop
+      on-provider-error: fail-closed
